@@ -17,6 +17,7 @@ from PIL import ImageGrab
 https://www.codeproject.com/Articles/20651/Capturing-Minimized-Window-A-Kid-s-Trick
 https://www.programcreek.com/python/example/62809/win32ui.CreateBitmap
 '''
+round_start = 0
 check = 0
 startbet = 0
 lose_count = 0
@@ -131,21 +132,9 @@ def mathc_img_bet_banker(image,value):
     min_v,max_v,min_l,max_l = cv2.minMaxLoc(res)
     
     if max_l[1] + h < 270 and 600< max_l[0] + w <1280 :
-        #count[0] = 0
-        #print ('in)
-        #cv2.rectangle(img_rgb, max_l, (max_l[0] + w, max_l[1] + h), (7,249,151), 2)
-        #cv2.rectangle(img_rgb, max_l, (max_l[0] + w, max_l[1] + h), (7,249,151), 2)
-        #bankers.append(((max_l[0] + w)/2, (max_l[1] + h)/2))
+        
         return int((max_l[0] + w)), int((max_l[1] + h))
-    #threshold = value 
-    #loc = np.where( res >= threshold) 
-    #for pt in zip(*loc[::-1]): 
-        #cv2.rectangle(img_rgb, pt, (pt[0] + w, pt[1] + h), (7,249,151), 2)
-        #bankers.append(((pt[0] + w)/2, (pt[1] + h)/2))
-        #bankers.append((pt[0] + w)/2)
-    #cv2.imshow('Detected',img_rgb) 
-    #cv2.waitKey(0) 
-    #cv2.destroyAllWindows()
+    
     
     return 0,0
 
@@ -160,21 +149,9 @@ def mathc_img_bet_player(image,value):
     min_v,max_v,min_l,max_l = cv2.minMaxLoc(res)
     
     if max_l[1] + h < 270 and 600< max_l[0] + w <1280 :
-        #count[0] = 0
-        #print ('in)
-        #cv2.rectangle(img_rgb, max_l, (max_l[0] + w, max_l[1] + h), (7,249,151), 2)
-        #cv2.rectangle(img_rgb, max_l, (max_l[0] + w, max_l[1] + h), (7,249,151), 2)
-        #bankers.append(((max_l[0] + w)/2, (max_l[1] + h)/2))
+        
         return int((max_l[0] + w)), int((max_l[1] + h))
-    #threshold = value 
-    #loc = np.where( res >= threshold) 
-    #for pt in zip(*loc[::-1]): 
-        #cv2.rectangle(img_rgb, pt, (pt[0] + w, pt[1] + h), (7,249,151), 2)
-        #bankers.append(((pt[0] + w)/2, (pt[1] + h)/2))
-        #bankers.append((pt[0] + w)/2)
-    #cv2.imshow('Detected',img_rgb) 
-    #cv2.waitKey(0) 
-    #cv2.destroyAllWindows()
+
     
     return 0,0
 
@@ -190,26 +167,14 @@ def mathc_img_bet_confirm(image,value):
     min_v,max_v,min_l,max_l = cv2.minMaxLoc(res)
     
     if 100<max_l[1] + h < 270 and 600< max_l[0] + w <1280 :
-        #count[0] = 0
-        #print ('in)
-        #cv2.rectangle(img_rgb, max_l, (max_l[0] + w, max_l[1] + h), (7,249,151), 2)
-        #cv2.rectangle(img_rgb, max_l, (max_l[0] + w, max_l[1] + h), (7,249,151), 2)
-        #bankers.append(((max_l[0] + w)/2, (max_l[1] + h)/2))
+        
         return int((max_l[0] + w)), int((max_l[1] + h))
-    #threshold = value 
-    #loc = np.where( res >= threshold) 
-    #for pt in zip(*loc[::-1]): 
-        #cv2.rectangle(img_rgb, pt, (pt[0] + w, pt[1] + h), (7,249,151), 2)
-        #bankers.append(((pt[0] + w)/2, (pt[1] + h)/2))
-        #bankers.append((pt[0] + w)/2)
-    #cv2.imshow('Detected',img_rgb) 
-    #cv2.waitKey(0) 
-    #cv2.destroyAllWindows()
+    
     
     return 0,0
 
 def mathc_img_ini(image,value): 
-    global count
+    global count,round_start
     img_rgb = image
     img_gray = cv2.cvtColor(img_rgb, cv2.COLOR_BGR2GRAY) 
     template = cv2.imread('Card_Imgs/reset1.png',0) 
@@ -220,19 +185,10 @@ def mathc_img_ini(image,value):
     
     if 150<max_l[1] + h < 270 and 100< max_l[0] + w <1280 :
         count[0] = 0
+        round_start = 1
         print ('ini')
         cv2.rectangle(img_rgb, max_l, (max_l[0] + w, max_l[1] + h), (7,249,151), 2)
-        #cv2.rectangle(img_rgb, max_l, (max_l[0] + w, max_l[1] + h), (7,249,151), 2)
-        #bankers.append(((max_l[0] + w)/2, (max_l[1] + h)/2))
-    #threshold = value 
-    #loc = np.where( res >= threshold) 
-    #for pt in zip(*loc[::-1]): 
-        #cv2.rectangle(img_rgb, pt, (pt[0] + w, pt[1] + h), (7,249,151), 2)
-        #bankers.append(((pt[0] + w)/2, (pt[1] + h)/2))
-        #bankers.append((pt[0] + w)/2)
-    #cv2.imshow('Detected',img_rgb) 
-    #cv2.waitKey(0) 
-    #cv2.destroyAllWindows()
+       
     
     return img_rgb
 
@@ -244,9 +200,7 @@ def mathc_img_end(image,value):
     w, h = template.shape[::-1] 
     res = cv2.matchTemplate(img_gray,template,cv2.TM_CCOEFF_NORMED) 
     
-    #if res==[]:
-        #end[0] = 0
-        #print('end')
+ 
     min_v,max_v,min_l,max_l = cv2.minMaxLoc(res)
     
     if max_l[1] + h < 270 and 100< max_l[0] + w <1280 :
@@ -259,15 +213,7 @@ def mathc_img_end(image,value):
         #print('bet time')
         end[0] = 0
         startbet = 1
-    #threshold = value 
-    #loc = np.where( res >= threshold) 
-    #for pt in zip(*loc[::-1]): 
-        #cv2.rectangle(img_rgb, pt, (pt[0] + w, pt[1] + h), (7,249,151), 2)
-        #bankers.append(((pt[0] + w)/2, (pt[1] + h)/2))
-        #bankers.append((pt[0] + w)/2)
-    #cv2.imshow('Detected',img_rgb) 
-    #cv2.waitKey(0) 
-    #cv2.destroyAllWindows()
+   
     
     return img_rgb
 
@@ -345,16 +291,7 @@ def mathc_img_whowin(image,value):
             print('n win')
             print('---')
             cv2.rectangle(img_rgb, max_l, (max_l[0] + w, max_l[1] + h), (7,249,151), 2)
-        #bankers.append(((max_l[0] + w)/2, (max_l[1] + h)/2))
-    #threshold = value 
-    #loc = np.where( res >= threshold) 
-    #for pt in zip(*loc[::-1]): 
-        #cv2.rectangle(img_rgb, pt, (pt[0] + w, pt[1] + h), (7,249,151), 2)
-        #bankers.append(((pt[0] + w)/2, (pt[1] + h)/2))
-        #bankers.append((pt[0] + w)/2)
-    #cv2.imshow('Detected',img_rgb) 
-    #cv2.waitKey(0) 
-    #cv2.destroyAllWindows()
+     
     
     
     return img_rgb
@@ -372,17 +309,7 @@ def mathc_img_bankers(image,value):
     if max_l[1] + h < 270:
         #cv2.rectangle(img_rgb, max_l, (max_l[0] + w, max_l[1] + h), (7,249,151), 2)
         bankers.append(((max_l[0] + w)/2, (max_l[1] + h)/2))
-        #count[0] = count[0]+1
-        #cv2.putText(img_rgb, str(count[0]), (int((max_l[0] + w)/2), int((max_l[1] + h)/2)), cv2.FONT_HERSHEY_SIMPLEX,  1, (0, 255, 255), 1, cv2.LINE_AA)
-    #threshold = value 
-    #loc = np.where( res >= threshold) 
-    #for pt in zip(*loc[::-1]): 
-        #cv2.rectangle(img_rgb, pt, (pt[0] + w, pt[1] + h), (7,249,151), 2)
-        #bankers.append(((pt[0] + w)/2, (pt[1] + h)/2))
-        #bankers.append((pt[0] + w)/2)
-    #cv2.imshow('Detected',img_rgb) 
-    #cv2.waitKey(0) 
-    #cv2.destroyAllWindows()
+     
     
     return img_rgb
 
@@ -395,12 +322,7 @@ def mathc_img_cards(image,value):
     res = cv2.matchTemplate(img_gray,template,cv2.TM_CCOEFF_NORMED) 
     min_v,max_v,min_l,max_l = cv2.minMaxLoc(res)
     
-    #if max_l[1] + h < 270:
-               
-            #if abs(bankers[0][0]-((max_l[0] + w)/2))<50 and abs(bankers[0][1]-((max_l[1] + h)/2))<150:
-                #cv2.rectangle(img_rgb, max_l, (max_l[0] + int(w/2), max_l[1] + h), (7,249,151), 2)
-                #cards.append((max_l[0],max_l[1],(max_l[0] + int(w/2)), (max_l[1] + h)))
-                #break
+
     threshold = value 
     loc = np.where( res >= threshold) 
     #print (res)
@@ -411,9 +333,7 @@ def mathc_img_cards(image,value):
                 cv2.rectangle(img_rgb, pt, (pt[0] + int(w/2), pt[1] + h), (7,249,151), 2)
                 cards.append((pt[0],pt[1],(pt[0] + int(w/2)), (pt[1] + h)))
                 break
-    #cv2.imshow('Detected',img_rgb) 
-    #cv2.waitKey(0) 
-    #cv2.destroyAllWindows()
+
     
     return img_rgb
 
@@ -434,10 +354,7 @@ def mathc_img_color(image,value):
             for pt in zip(*loc[::-1]): 
                 cv2.putText(img_rgb, 'red', (card[0], card[1]), cv2.FONT_HERSHEY_SIMPLEX,  1, (0, 0, 255), 1, cv2.LINE_AA)
                 colors.append(('banker',card[0],card[1]))
-                #if abs(banker[0]-((pt[0] + w)/2))<50 and abs(banker[1]-((pt[1] + h)/2))<150:
-                    #cv2.rectangle(img_rgb, pt, (pt[0] + int(w/2), pt[1] + h), (7,249,151), 2)
-                    #cards.append(((pt[0] + int(w/2)), (pt[1] + h)))
-                #return img_rgb
+
                 break
         for black in blacks:
             w, h = black.shape[::-1] 
@@ -448,14 +365,9 @@ def mathc_img_color(image,value):
                 cv2.putText(img_rgb, 'black', (card[0], card[1]), cv2.FONT_HERSHEY_SIMPLEX,
   1, (0, 0, 0), 1, cv2.LINE_AA)
                 colors.append(('player',card[0],card[1]))
-                #if abs(banker[0]-((pt[0] + w)/2))<50 and abs(banker[1]-((pt[1] + h)/2))<150:
-                    #cv2.rectangle(img_rgb, pt, (pt[0] + int(w/2), pt[1] + h), (7,249,151), 2)
-                    #cards.append(((pt[0] + int(w/2)), (pt[1] + h)))
-                #return img_rgb
+
                 break
-    #cv2.imshow('Detected',img_rgb) 
-    #cv2.waitKey(0) 
-    #cv2.destroyAllWindows()
+ 
     return img_rgb
 
 def mathc_img_color_one(image,value): 
@@ -478,10 +390,7 @@ def mathc_img_color_one(image,value):
             cv2.rectangle(img_rgb, (583,161), (643,258), (7,249,151), 2)
             cv2.putText(img_rgb, 'red', (card[0], card[1]), cv2.FONT_HERSHEY_SIMPLEX,  1, (0, 0, 255), 1, cv2.LINE_AA)
             colors.append(('banker',card[0],card[1]))
-            #if abs(banker[0]-((pt[0] + w)/2))<50 and abs(banker[1]-((pt[1] + h)/2))<150:
-                #cv2.rectangle(img_rgb, pt, (pt[0] + int(w/2), pt[1] + h), (7,249,151), 2)
-                #cards.append(((pt[0] + int(w/2)), (pt[1] + h)))
-            #return img_rgb
+           
             break
     for black in blacks:
         #cv2.rectangle(img_rgb, (583,161), (643,258), (7,249,151), 2)
@@ -494,14 +403,9 @@ def mathc_img_color_one(image,value):
             cv2.putText(img_rgb, 'black', (card[0], card[1]), cv2.FONT_HERSHEY_SIMPLEX,
 1, (0, 0, 0), 1, cv2.LINE_AA)
             colors.append(('player',card[0],card[1]))
-            #if abs(banker[0]-((pt[0] + w)/2))<50 and abs(banker[1]-((pt[1] + h)/2))<150:
-                #cv2.rectangle(img_rgb, pt, (pt[0] + int(w/2), pt[1] + h), (7,249,151), 2)
-                #cards.append(((pt[0] + int(w/2)), (pt[1] + h)))
-            #return img_rgb
+           
             break
-    #cv2.imshow('Detected',img_rgb) 
-    #cv2.waitKey(0) 
-    #cv2.destroyAllWindows()
+   
     return img_rgb
     
 def mathc_img_bet(image,value): 
@@ -525,12 +429,7 @@ def mathc_img_bet(image,value):
                     bets.append((pt[0],pt[1],(pt[0] + w), (pt[1] + h),(pt[1] + h/2)))
         else:
             bets.append((pt[0],pt[1],(pt[0] + w), (pt[1] + h),(pt[1] + h/2)))
-        #bets.append((pt[0],pt[1],(pt[0] + w), (pt[1] + h),(pt[1] + h/2)))
-        #bankers.append((pt[0] + w)/2)
-    #cv2.imshow('Detected',img_rgb) 
-    #cv2.waitKey(0) 
-    #cv2.destroyAllWindows()
-    #print(len(bets))
+        
     i = []
     for bet in bets:
         
@@ -567,12 +466,7 @@ def bet_who(who,times):
     
 def bet_money(lose_times,who):
     if lose_times == 0:
-        # pyautogui.click(x=1338,y=1010,button='left')
-        # if bet_who=='banker':
-            # pyautogui.click(x=1150,y=115,button='left')
-        # if bet_who=='player':
-            # pyautogui.click(x=932,y=115,button='left')
-        # pyautogui.click(x=1028,y=276,button='left')
+
         select_money(100)
         bet_who(who,1)
         
@@ -661,6 +555,7 @@ while(bx!=0 and by!=0 and px!=0 and py!=0):
         bet_last=''
         result = 'first'
         count[0] = 0
+        round_start = 0
         continue
     pil_image = ImageGrab.grab(bbox=(x, y, width, height))
     
@@ -756,7 +651,7 @@ while(bx!=0 and by!=0 and px!=0 and py!=0):
         bet_last='player'
         bet_one=''
     '''
-    if bet_one =='banker' and startbet == 1 and check==0:
+    if bet_one =='banker' and startbet == 1 and check==0 and round_start ==1:
         sleep(1)
         check=1
         startbet = 0
@@ -765,7 +660,7 @@ while(bx!=0 and by!=0 and px!=0 and py!=0):
         #print('click_c')
         bet_last='banker'
         bet_one=''
-    if bet_one =='player' and startbet == 1 and check==0:
+    if bet_one =='player' and startbet == 1 and check==0 and round_start ==1:
         sleep(1)
         check=1
         startbet = 0
@@ -773,6 +668,7 @@ while(bx!=0 and by!=0 and px!=0 and py!=0):
         #print('click_c')
         bet_last='player'
         bet_one=''
+    
     
     
     ###
