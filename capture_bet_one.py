@@ -19,6 +19,7 @@ https://www.programcreek.com/python/example/62809/win32ui.CreateBitmap
 '''
 check = 0
 startbet = 0
+lose_count = 0
 whowin = ''
 bet_one=''
 bet_last=''
@@ -39,7 +40,7 @@ blacks = [cv2.imread('Card_Imgs/Clubs.png',0),cv2.imread('Card_Imgs/Spades.png',
 ,cv2.imread('Card_Imgs/Clubs4.png',0),cv2.imread('Card_Imgs/Spades4.png',0)]
 #red.append(cv2.imread('Card_Imgs/twocard.png',0))
 
-message = np.zeros((300, 300, 3), np.uint8)
+message = np.zeros((500, 500, 3), np.uint8)
 
 
 def FindWindow_bySearch(pattern):
@@ -271,7 +272,7 @@ def mathc_img_end(image,value):
     return img_rgb
 
 def mathc_img_whowin(image,value): 
-    global count,end,whowin,bet_last,result
+    global count,end,whowin,bet_last,result,lose_count
     img_rgb = image
     img_gray = cv2.cvtColor(img_rgb, cv2.COLOR_BGR2GRAY) 
     player_win = cv2.imread('Card_Imgs/player_win.png',0) 
@@ -295,6 +296,7 @@ def mathc_img_whowin(image,value):
             if bet_last==whowin:
                 #cv2.putText(message, 'bet win', (50, 150), cv2.FONT_HERSHEY_SIMPLEX,  1, (0, 255, 255), 4, cv2.LINE_AA)
                 result = 'bet win'
+                lose_count = 0
                 print ('bet win')
             elif bet_last=='':
                 #cv2.putText(message, 'no bet', (50, 150), cv2.FONT_HERSHEY_SIMPLEX,  1, (0, 255, 255), 4, cv2.LINE_AA)
@@ -303,6 +305,7 @@ def mathc_img_whowin(image,value):
             else:
                 #cv2.putText(message, 'bet lose', (50, 150), cv2.FONT_HERSHEY_SIMPLEX,  1, (0, 255, 255), 4, cv2.LINE_AA)
                 result = 'bet lose'
+                lose_count += 1
                 print ('bet lose')
             #cv2.putText(message, 'p win', (50, 250), cv2.FONT_HERSHEY_SIMPLEX,  1, (0, 255, 255), 4, cv2.LINE_AA)
             print('p win')
@@ -318,6 +321,7 @@ def mathc_img_whowin(image,value):
             if bet_last==whowin:
                 #cv2.putText(message, 'bet win', (50, 150), cv2.FONT_HERSHEY_SIMPLEX,  1, (0, 255, 255), 4, cv2.LINE_AA)
                 result = 'bet win'
+                lose_count = 0
                 print ('bet win')
             elif bet_last=='':
                 #cv2.putText(message, 'no bet', (50, 150), cv2.FONT_HERSHEY_SIMPLEX,  1, (0, 255, 255), 4, cv2.LINE_AA)
@@ -326,6 +330,7 @@ def mathc_img_whowin(image,value):
             else:
                 #cv2.putText(message, 'bet lose', (50, 150), cv2.FONT_HERSHEY_SIMPLEX,  1, (0, 255, 255), 4, cv2.LINE_AA)
                 result = 'bet lose'
+                lose_count += 1
                 print ('bet lose')
             #cv2.putText(message, 'b win', (50, 250), cv2.FONT_HERSHEY_SIMPLEX,  1, (0, 255, 255), 4, cv2.LINE_AA)
             print('b win')
@@ -538,7 +543,89 @@ def mathc_img_bet(image,value):
         return 1
     else:
         return 0
- 
+
+def select_money(value):
+    if value==50:
+        pyautogui.click(x=1264,y=1010,button='left')
+    elif value==100:
+        pyautogui.click(x=1338,y=1010,button='left')
+    elif value==500:
+        pyautogui.click(x=1410,y=1010,button='left')
+    elif value==1000:
+        pyautogui.click(x=1480,y=1010,button='left')
+    elif value==5000:
+        pyautogui.click(x=1559,y=1010,button='left')
+
+def bet_who(who,times):
+    if who=='banker':
+        pyautogui.click(x=1150,y=115,button='left')
+        pyautogui.click(clicks=times-1)
+    if who=='player':
+        pyautogui.click(x=932,y=115,button='left')
+        pyautogui.click(clicks=times-1)
+    pyautogui.click(x=1028,y=276,button='left')
+    
+def bet_money(lose_times,who):
+    if lose_times == 0:
+        # pyautogui.click(x=1338,y=1010,button='left')
+        # if bet_who=='banker':
+            # pyautogui.click(x=1150,y=115,button='left')
+        # if bet_who=='player':
+            # pyautogui.click(x=932,y=115,button='left')
+        # pyautogui.click(x=1028,y=276,button='left')
+        select_money(100)
+        bet_who(who,1)
+        
+    elif lose_times == 1:
+        select_money(100)
+        bet_who(who,2)
+    elif lose_times == 2:
+        select_money(100)
+        bet_who(who,4)
+    elif lose_times == 3:
+        select_money(500)
+        bet_who(who,1)
+        select_money(100)
+        bet_who(who,3)
+        select_money(50)
+        bet_who(who,1)
+    elif lose_times == 4:
+        select_money(1000)
+        bet_who(who,1)
+        select_money(500)
+        bet_who(who,1)
+        select_money(100)
+        bet_who(who,2)
+    elif lose_times == 5:
+        select_money(1000)
+        bet_who(who,3)
+        select_money(500)
+        bet_who(who,1)
+        
+    elif lose_times == 6:
+        select_money(5000)
+        bet_who(who,1)
+        select_money(1000)
+        bet_who(who,2)
+        select_money(100)
+        bet_who(who,2)
+    elif lose_times == 7:
+        select_money(5000)
+        bet_who(who,2)
+        select_money(1000)
+        bet_who(who,4)
+        select_money(500)
+        bet_who(who,1)
+        select_money(100)
+        bet_who(who,3)
+    elif lose_times == 8:
+        select_money(5000)
+        bet_who(who,6)
+        select_money(100)
+        bet_who(who,4)
+        
+
+        
 hwnd = FindWindow_bySearch("CaliBet")
 
 
@@ -556,7 +643,7 @@ px,py = mathc_img_bet_player(frame,1)
 while(bx!=0 and by!=0 and px!=0 and py!=0):
     
     sleep(0.03)
-    message = np.zeros((300, 300, 3), np.uint8)
+    message = np.zeros((500, 500, 3), np.uint8)
     x, y, width, height = getWindow_W_H(hwnd)
     #print (getWindow_W_H(hwnd))
     #pic = ImageGrab.grabclipboard()
@@ -566,6 +653,15 @@ while(bx!=0 and by!=0 and px!=0 and py!=0):
     bankers =[]
     cards =[]
     colors = []
+    
+    if result=='bet win' and count[0]>=51:
+        bets=[]
+        whowin = ''
+        bet_one=''
+        bet_last=''
+        result = 'first'
+        count[0] = 0
+        continue
     pil_image = ImageGrab.grab(bbox=(x, y, width, height))
     
     frame = cv2.cvtColor(np.asarray(pil_image),cv2.COLOR_RGB2BGR)
@@ -625,6 +721,7 @@ while(bx!=0 and by!=0 and px!=0 and py!=0):
             # print('no bet')
         # else:
             # print('lose')
+    '''
     if bet_one =='banker' and startbet == 1 and check==0:
         sleep(1)
         check=1
@@ -658,6 +755,25 @@ while(bx!=0 and by!=0 and px!=0 and py!=0):
         #print('click_c')
         bet_last='player'
         bet_one=''
+    '''
+    if bet_one =='banker' and startbet == 1 and check==0:
+        sleep(1)
+        check=1
+        startbet = 0
+        #pyautogui.click(x=bx,y=by,button='left')
+        bet_money(lose_count,bet_one)
+        #print('click_c')
+        bet_last='banker'
+        bet_one=''
+    if bet_one =='player' and startbet == 1 and check==0:
+        sleep(1)
+        check=1
+        startbet = 0
+        bet_money(lose_count,bet_one)
+        #print('click_c')
+        bet_last='player'
+        bet_one=''
+    
     
     ###
     cv2.putText(mtimg, str(count[0]), (100, 100), cv2.FONT_HERSHEY_SIMPLEX,  1, (0, 255, 255), 4, cv2.LINE_AA)
@@ -673,9 +789,11 @@ while(bx!=0 and by!=0 and px!=0 and py!=0):
     #pil_image = pic.crop(box=(x,y,width-x,height-y))
     
     
-    cv2.putText(message, str(count[0]), (50, 50), cv2.FONT_HERSHEY_SIMPLEX,  1, (0, 255, 255), 4, cv2.LINE_AA)
-    cv2.putText(message, whowin, (50, 150), cv2.FONT_HERSHEY_SIMPLEX,  1, (0, 255, 255), 4, cv2.LINE_AA)
-    cv2.putText(message, result, (50, 250), cv2.FONT_HERSHEY_SIMPLEX,  1, (0, 255, 255), 4, cv2.LINE_AA)
+    cv2.putText(message, "Count: "+str(count[0])+" Lose Count: "+str(lose_count), (50, 50), cv2.FONT_HERSHEY_SIMPLEX,  1, (0, 255, 255), 4, cv2.LINE_AA)
+    cv2.putText(message, "Who Win: "+whowin, (50, 150), cv2.FONT_HERSHEY_SIMPLEX,  1, (0, 255, 255), 4, cv2.LINE_AA)
+    cv2.putText(message, "Bet Result: "+result, (50, 250), cv2.FONT_HERSHEY_SIMPLEX,  1, (0, 255, 255), 4, cv2.LINE_AA)
+    cv2.putText(message, "Which Bet: "+bet_one, (50, 350), cv2.FONT_HERSHEY_SIMPLEX,  1, (0, 255, 255), 4, cv2.LINE_AA)
+    cv2.putText(message, "Last Bet: "+bet_last, (50, 450), cv2.FONT_HERSHEY_SIMPLEX,  1, (0, 255, 255), 4, cv2.LINE_AA)
     #frame = getWindow_Img(hwnd)
     cv2.namedWindow("Message",0)
     cv2.imshow("Message", message)
