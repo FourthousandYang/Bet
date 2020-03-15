@@ -17,6 +17,7 @@ from configparser import ConfigParser
 cfg = ConfigParser()
 cfg.read('config.ini')
 emode = cfg['mode'].getint('emode')
+remode = cfg['mode'].getint('remode')
 gc.collect()
 
 '''
@@ -28,6 +29,7 @@ https://www.programcreek.com/python/example/62809/win32ui.CreateBitmap
 round_time = 0
 round_start = 0
 check = 0
+check_start = 0
 check_end = 0
 startbet = 0
 lose_count = 0
@@ -188,7 +190,7 @@ def mathc_img_bet_confirm(image,value):
     return 0,0
 ## 判斷洗牌
 def mathc_img_ini(image,value): 
-    global count,round_start,status
+    global count,round_start,status,check_start,lose_count
     img_rgb = image
     img_gray = cv2.cvtColor(img_rgb, cv2.COLOR_BGR2GRAY) 
     template = cv2.imread('Card_Imgs/reset1.png',0) 
@@ -200,10 +202,14 @@ def mathc_img_ini(image,value):
     if 150<max_l[1] + h < 270 and 100< max_l[0] + w <1280 :
         count[0] = 0
         round_start = 1
-        status='reset'
-        print ('ini')
+        check_start = 1
+        lose_count = 0
+        status = 'reset'
+        #print ('ini')
         cv2.rectangle(img_rgb, max_l, (max_l[0] + w, max_l[1] + h), (7,249,151), 2)
        
+    else:
+        check_start = 0
     
     return img_rgb
 ## 判斷結算
@@ -783,7 +789,7 @@ def bet_who(who,times,ok=0):
     wbx=cfg['param'].getint('wbx')
     wby=cfg['param'].getint('wby')
     wpx=cfg['param'].getint('wpx')
-    wby=cfg['param'].getint('wby')
+    wpy=cfg['param'].getint('wpy')
     wcx=cfg['param'].getint('wcx')
     wcy=cfg['param'].getint('wcy')
     if who=='banker':
@@ -922,6 +928,7 @@ while(bx!=0 and by!=0 and px!=0 and py!=0):
         result = 'first'
         count[0] = 0
         round_start = 0
+        lose_count = 0
         continue
     pil_image = ImageGrab.grab(bbox=(x, y, width, height))
     
@@ -939,26 +946,27 @@ while(bx!=0 and by!=0 and px!=0 and py!=0):
     #frame = mathc_img(frame,'Card_Imgs/bet.png',0.9)
     ###
     
-    gray = cv2.cvtColor(frame, cv2.COLOR_RGB2GRAY)
+    # gray = cv2.cvtColor(frame, cv2.COLOR_RGB2GRAY)
 
-    kernel_size = 3
-    blur_gray = cv2.GaussianBlur(gray,(kernel_size, kernel_size), 0)
+    # kernel_size = 3
+    # blur_gray = cv2.GaussianBlur(gray,(kernel_size, kernel_size), 0)
 
-    low_threshold = 1
-    high_threshold = 10
-    edges = cv2.Canny(blur_gray, low_threshold, high_threshold)
+    # low_threshold = 1
+    # high_threshold = 10
+    # edges = cv2.Canny(blur_gray, low_threshold, high_threshold)
     #print (len(bets))
     # for bet in bets:
         # cv2.rectangle(frame, (bet[0],bet[1]), (bet[2], bet[3]), (7,249,151), 2)
     
     #x=1028-50,y=276
-    
-    cv2.circle(frame,(1028-50,296),10,(0,0,255),-1)
-    cv2.circle(frame,(1150-50,115),10,(0,255,0),-1)
-    cv2.circle(frame,(932-50,115),10,(255,0,0),-1)
+    ##判斷
+    # cv2.circle(frame,(1028-50,296),10,(0,0,255),-1)
+    # cv2.circle(frame,(1150-50,115),10,(0,255,0),-1)
+    # cv2.circle(frame,(932-50,115),10,(255,0,0),-1)
     #print (bx,by,px,py)
     mtimg = mathc_img_ini(frame,0.9)
-    mtimg = mathc_img_end(frame,0.9)
+    if check_start == 0:
+        mtimg = mathc_img_end(frame,0.9)
     #mtimg = mathc_img_whowin(frame,0.9)
     #img_whowin(frame)
     mtimg = mathc_img_whowin1(frame,0.8)
@@ -985,6 +993,7 @@ while(bx!=0 and by!=0 and px!=0 and py!=0):
                     # pyautogui.click(x=px,y=py,button='left')
     '''
     #print (colors)
+    ## 下誰
     if colors!=[]:
         if colors[0][0] =='banker' :
             bet_one = 'banker'
@@ -1036,30 +1045,53 @@ while(bx!=0 and by!=0 and px!=0 and py!=0):
         bet_one=''
     '''
     #print (bet_one)
-    if bet_one =='banker' and startbet == 1  :
-        sleep(1)
-        check=1
-        startbet = 0
-        #pyautogui.click(x=bx,y=by,button='left')
-        bet_money(lose_count,bet_one)
-        #print('click_c')
-        bet_last='banker'
-        bet_one=''
-        #cv2.putText(message, "Status: betting", (50, 300), cv2.FONT_HERSHEY_SIMPLEX,  1, (0, 255, 255), 4)
-        status='betting'
-        #print ('bet')
-    if bet_one =='player' and startbet == 1  :
-        sleep(1)
-        check=1
-        startbet = 0
-        bet_money(lose_count,bet_one)
-        #print('click_c')
-        bet_last='player'
-        bet_one=''
-        status='betting'
-        #cv2.putText(message, "Status: betting", (50, 300), cv2.FONT_HERSHEY_SIMPLEX,  1, (0, 255, 255), 4)
-        #print ('bet')
-    
+    ## 下注
+    if remode == 0:
+        if bet_one =='banker' and startbet == 1  and count[0] > 1:
+            sleep(1)
+            check=1
+            startbet = 0
+            #pyautogui.click(x=bx,y=by,button='left')
+            bet_money(lose_count,bet_one)
+            #print('click_c')
+            bet_last='banker'
+            bet_one=''
+            #cv2.putText(message, "Status: betting", (50, 300), cv2.FONT_HERSHEY_SIMPLEX,  1, (0, 255, 255), 4)
+            status='betting'
+            #print ('bet')
+        if bet_one =='player' and startbet == 1  and count[0] > 1:
+            sleep(1)
+            check=1
+            startbet = 0
+            bet_money(lose_count,bet_one)
+            #print('click_c')
+            bet_last='player'
+            bet_one=''
+            status='betting'
+            #cv2.putText(message, "Status: betting", (50, 300), cv2.FONT_HERSHEY_SIMPLEX,  1, (0, 255, 255), 4)
+            #print ('bet')
+    else:
+        if bet_one =='banker' and startbet == 1 and round_start==1 and count[0] > 1:
+            sleep(1)
+            check=1
+            startbet = 0
+            #pyautogui.click(x=bx,y=by,button='left')
+            bet_money(lose_count,bet_one)
+            #print('click_c')
+            bet_last='banker'
+            bet_one=''
+            #cv2.putText(message, "Status: betting", (50, 300), cv2.FONT_HERSHEY_SIMPLEX,  1, (0, 255, 255), 4)
+            status='betting'
+            #print ('bet')
+        if bet_one =='player' and startbet == 1  and round_start==1 and count[0] > 1:
+            sleep(1)
+            check=1
+            startbet = 0
+            bet_money(lose_count,bet_one)
+            #print('click_c')
+            bet_last='player'
+            bet_one=''
+            status='betting'
     
     ###
     cv2.putText(mtimg, str(count[0]), (100, 100), cv2.FONT_HERSHEY_SIMPLEX,  1, (0, 255, 255), 4, cv2.LINE_AA)
