@@ -4,3 +4,5 @@ Pillow==7.0.0
 PyAutoGUI==0.9.4
 win32core==221.36
 win32gui==221.6
+pywin32
+pynput
