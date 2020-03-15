@@ -39,6 +39,7 @@ bets = []
 bankers =[]
 cards =[]
 colors = []
+wins = []
 
 reds = [cv2.imread('Card_Imgs/Diamonds.png',0),cv2.imread('Card_Imgs/Hearts.png',0)
 ,cv2.imread('Card_Imgs/Diamonds2.png',0),cv2.imread('Card_Imgs/Hearts2.png',0)
@@ -196,7 +197,7 @@ def mathc_img_ini(image,value):
         count[0] = 0
         round_start = 1
         status='reset'
-        #print ('ini')
+        print ('ini')
         cv2.rectangle(img_rgb, max_l, (max_l[0] + w, max_l[1] + h), (7,249,151), 2)
        
     
@@ -592,7 +593,7 @@ def img_whowin(image):
     #return img_rgb
 ## 判斷誰贏
 def mathc_img_whowin1(image,value): 
-    global count,end,whowin,bet_last,result,lose_count
+    global count,end,whowin,bet_last,result,lose_count,wins
     img_rgb = image
     img_gray = cv2.cvtColor(img_rgb, cv2.COLOR_BGR2GRAY) 
     player_win = cv2.imread('Card_Imgs/player_win.png',0) 
@@ -606,16 +607,17 @@ def mathc_img_whowin1(image,value):
     #min_v,max_v,min_l,max_l = cv2.minMaxLoc(res)
     #if end[0]!=0:
         #return img_rgb
-    
+    wins=[]
     threshold = value
     if player_win_res!=[]:
         w, h = player_win.shape[::-1] 
         
         min_v,max_v,min_l,max_l = cv2.minMaxLoc(player_win_res)
-        if 50< max_l[1] + h/2 < 200 and 300< max_l[0] + w/2 <500 :
+        if 50< max_l[1] + h/2 < 300 and 450< max_l[0] + w/2 <500 :
             
             #img_whowin(image)
             img_whowin(img_rgb[max_l[1]:max_l[1] + h,max_l[0]:max_l[0] + w])
+            wins = img_rgb[max_l[1]:max_l[1] + h,max_l[0]:max_l[0] + w]
             cv2.rectangle(img_rgb, max_l, (max_l[0] + w, max_l[1] + h), (7,249,151), 2)
             cv2.imwrite('cr1.jpg',img_rgb)
         
@@ -623,10 +625,11 @@ def mathc_img_whowin1(image,value):
         w, h = banker_win.shape[::-1]
         
         min_v,max_v,min_l,max_l = cv2.minMaxLoc(banker_win_res)
-        if 50< max_l[1] + h/2 < 300 and 300< max_l[0] + w/2 <500 :
+        if 50< max_l[1] + h/2 < 300 and 450< max_l[0] + w/2 <500 :
             
             #img_whowin(image)
             img_whowin(img_rgb[max_l[1]:max_l[1] + h,max_l[0]:max_l[0] + w])
+            wins = img_rgb[max_l[1]:max_l[1] + h,max_l[0]:max_l[0] + w]
             cv2.rectangle(img_rgb, max_l, (max_l[0] + w, max_l[1] + h), (7,249,151), 2)
             cv2.imwrite('cr1.jpg',img_rgb)
         
@@ -634,10 +637,11 @@ def mathc_img_whowin1(image,value):
         w, h = no_win.shape[::-1]
         
         min_v,max_v,min_l,max_l = cv2.minMaxLoc(no_win_res)
-        if 50< max_l[1] + h/2 < 200 and 300< max_l[0] + w/2 <500 :
+        if 50< max_l[1] + h/2 < 300 and 450< max_l[0] + w/2 <500 :
             
             #img_whowin(image)
             img_whowin(img_rgb[max_l[1]:max_l[1] + h,max_l[0]:max_l[0] + w])
+            wins = img_rgb[max_l[1]:max_l[1] + h,max_l[0]:max_l[0] + w]
             cv2.rectangle(img_rgb, max_l, (max_l[0] + w, max_l[1] + h), (7,249,151), 2)
             cv2.imwrite('cr1.jpg',img_rgb)
      
@@ -843,6 +847,11 @@ def switch(acc):
     if acc == 2:
         switch_acc = 2
         pyautogui.click(x=378,y=17,button='left')
+def dim_xy(img,scale):
+    scale_percent = scale # percent of original size
+    width = int(img.shape[1] * scale_percent / 100)
+    height = int(img.shape[0] * scale_percent / 100)
+    return (width, height)
     
 def on_click(x, y, button, pressed):
     
@@ -873,7 +882,7 @@ px,py = mathc_img_bet_player(frame,1)
 while(bx!=0 and by!=0 and px!=0 and py!=0):
     
     sleep(0.03)
-    message.fill(0) #= np.zeros((500, 600), np.uint8)
+    message.fill(255) #= np.zeros((500, 600), np.uint8)
     x, y, width, height = getWindow_W_H(hwnd)
     #print (getWindow_W_H(hwnd))
     #pic = ImageGrab.grabclipboard()
@@ -883,6 +892,7 @@ while(bx!=0 and by!=0 and px!=0 and py!=0):
     bankers =[]
     cards =[]
     colors = []
+    wins = []
     if lose_count>9:
         lose_count = 0
     if (lose_count == 8 or lose_count == 9)  and switch_acc == 2:
@@ -1039,10 +1049,11 @@ while(bx!=0 and by!=0 and px!=0 and py!=0):
     
     ###
     cv2.putText(mtimg, str(count[0]), (100, 100), cv2.FONT_HERSHEY_SIMPLEX,  1, (0, 255, 255), 4, cv2.LINE_AA)
-    scale_percent = 50 # percent of original size
-    width = int(mtimg.shape[1] * scale_percent / 100)
-    height = int(mtimg.shape[0] * scale_percent / 100)
-    dim = (width, height)
+    # scale_percent = 50 # percent of original size
+    # width = int(mtimg.shape[1] * scale_percent / 100)
+    # height = int(mtimg.shape[0] * scale_percent / 100)
+    # dim = (width, height)
+    dim =dim_xy(mtimg,50)
     reimage = cv2.resize(mtimg, dim, interpolation = cv2.INTER_AREA)
     
     
@@ -1051,11 +1062,11 @@ while(bx!=0 and by!=0 and px!=0 and py!=0):
     #pil_image = pic.crop(box=(x,y,width-x,height-y))
     
     
-    cv2.putText(message, "Count: "+str(count[0])+" Lose Count: "+str(lose_count), (50, 50), cv2.FONT_HERSHEY_SIMPLEX,  1, (0, 255, 255), 4)
-    cv2.putText(message, "Who Win: "+whowin, (50, 100), cv2.FONT_HERSHEY_SIMPLEX,  1, (0, 255, 255), 4,)
-    cv2.putText(message, "Bet Result: "+result, (50, 150), cv2.FONT_HERSHEY_SIMPLEX,  1, (0, 255, 255), 4)
-    cv2.putText(message, "Which Bet: "+bet_one, (50, 200), cv2.FONT_HERSHEY_SIMPLEX,  1, (0, 255, 255), 4)
-    cv2.putText(message, "Last Bet: "+bet_last, (50, 250), cv2.FONT_HERSHEY_SIMPLEX,  1, (0, 255, 255), 4)
+    cv2.putText(message, "Count: "+str(count[0])+" Lose Count: "+str(lose_count), (50, 50), cv2.FONT_HERSHEY_SIMPLEX,  1, (0, 0, 0), 4)
+    cv2.putText(message, "Who Win: "+whowin, (50, 100), cv2.FONT_HERSHEY_SIMPLEX,  1, (0, 0, 0), 4,)
+    cv2.putText(message, "Bet Result: "+result, (50, 150), cv2.FONT_HERSHEY_SIMPLEX,  1, (0, 0, 0), 4)
+    cv2.putText(message, "Which Bet: "+bet_one, (50, 200), cv2.FONT_HERSHEY_SIMPLEX,  1, (0, 0, 0), 4)
+    cv2.putText(message, "Last Bet: "+bet_last, (50, 250), cv2.FONT_HERSHEY_SIMPLEX,  1, (0, 0, 0), 4)
     # if check_end==1:
         # cv2.putText(message, "Status: close", (50, 300), cv2.FONT_HERSHEY_SIMPLEX,  1, (0, 255, 255), 4)
     # #cv2.putText(message, "Last Bet: "+bet_last, (50, 250), cv2.FONT_HERSHEY_SIMPLEX,  1, (0, 255, 255), 4)
@@ -1063,16 +1074,31 @@ while(bx!=0 and by!=0 and px!=0 and py!=0):
         # cv2.putText(message, "Status: reset", (50, 300), cv2.FONT_HERSHEY_SIMPLEX,  1, (0, 255, 255), 4)
     # if startbet == 1:
         # cv2.putText(message, "Status: start bet", (50, 300), cv2.FONT_HERSHEY_SIMPLEX,  1, (0, 255, 255), 4)
-    cv2.putText(message, "Status: "+status, (50, 300), cv2.FONT_HERSHEY_SIMPLEX,  1, (0, 255, 255), 4)
-    
+    cv2.putText(message, "Status: "+status, (50, 300), cv2.FONT_HERSHEY_SIMPLEX,  1, (0, 0, 0), 4)
+    #print (colors[0])
+    if colors!=[]:
+        cc=frame[colors[0][2]:colors[0][4],colors[0][1]:colors[0][3]]
+        dim =dim_xy(cc,500)
+        cc = cv2.resize(cc, dim, interpolation = cv2.INTER_AREA)
+        mask = 255 * np.ones(cc.shape, cc.dtype)
+        message = cv2.seamlessClone(cc,message,mask,(50,400),cv2.NORMAL_CLONE)
+    if wins!=[]:
+        #cc=frame[colors[0][2]:colors[0][4],colors[0][1]:colors[0][3]]
+        dim =dim_xy(wins,300)
+        wins = cv2.resize(wins, dim, interpolation = cv2.INTER_AREA)
+        mask = 255 * np.ones(wins.shape, wins.dtype)
+        message = cv2.seamlessClone(wins,message,mask,(150,400),cv2.NORMAL_CLONE)
     #message = cv2.add(message,mtimg[colors[1]:colors[3],colors[0]:colors[2]])
     #frame = getWindow_Img(hwnd)
     cv2.namedWindow("Message",1)
     cv2.imshow("Message", message)
     cv2.moveWindow('Message',1005,106)
-    #cv2.imshow("screen box", reimage)
+    cv2.imshow("screen box", reimage)
+    
     hwnd1 = FindWindow_bySearch("Message")
+    hwnd2 = FindWindow_bySearch("screen box")
     win32gui.SetForegroundWindow(hwnd1)
+    win32gui.SetForegroundWindow(hwnd2)
     #cv2.imshow("screen box", frame)
     #cv2.imshow("edges box", edges)
     k = cv2.waitKey(30)&0xFF #64bits! need a mask
