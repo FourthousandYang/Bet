@@ -12,7 +12,11 @@ from PIL import ImageGrab
 import collections
 from pynput.mouse import Listener
 import gc
+from configparser import ConfigParser
 
+cfg = ConfigParser()
+cfg.read('config.ini')
+emode = cfg['mode'].getint('emode')
 gc.collect()
 
 '''
@@ -744,16 +748,26 @@ def mathc_img_bet(image,value):
         return 0
 ## 選擇籌碼
 def select_money(value):
-    x50=981
-    y50=798
-    x100=1038
-    y100=798
-    x500=1093
-    y500=798
-    x1000=1154
-    y1000=798
-    x5000=1206
-    y5000=798
+    # x50=981
+    # y50=798
+    # x100=1038
+    # y100=798
+    # x500=1093
+    # y500=798
+    # x1000=1154
+    # y1000=798
+    # x5000=1206
+    # y5000=798
+    x50=cfg['param'].getint('x50')
+    y50=cfg['param'].getint('y50')
+    x100=cfg['param'].getint('x100')
+    y100=cfg['param'].getint('y100')
+    x500=cfg['param'].getint('x500')
+    y500=cfg['param'].getint('y500')
+    x1000=cfg['param'].getint('x1000')
+    y1000=cfg['param'].getint('y1000')
+    x5000=cfg['param'].getint('x5000')
+    y5000=cfg['param'].getint('y5000')
     if value==50:
         pyautogui.click(x=x50,y=y50,button='left')
     elif value==100:
@@ -766,12 +780,12 @@ def select_money(value):
         pyautogui.click(x=x5000,y=y5000,button='left')
 ##下誰
 def bet_who(who,times,ok=0):
-    wbx=883
-    wby=106
-    wpx=719
-    wby=106
-    wcx=806
-    wcy=233
+    wbx=cfg['param'].getint('wbx')
+    wby=cfg['param'].getint('wby')
+    wpx=cfg['param'].getint('wpx')
+    wby=cfg['param'].getint('wby')
+    wcx=cfg['param'].getint('wcx')
+    wcy=cfg['param'].getint('wcy')
     if who=='banker':
         pyautogui.click(x=wbx,y=wby,button='left')
         pyautogui.click(clicks=times-1)
@@ -1093,12 +1107,14 @@ while(bx!=0 and by!=0 and px!=0 and py!=0):
     cv2.namedWindow("Message",1)
     cv2.imshow("Message", message)
     cv2.moveWindow('Message',1005,106)
-    cv2.imshow("screen box", reimage)
-    
     hwnd1 = FindWindow_bySearch("Message")
-    hwnd2 = FindWindow_bySearch("screen box")
     win32gui.SetForegroundWindow(hwnd1)
-    win32gui.SetForegroundWindow(hwnd2)
+    
+    if emode == 1:
+        cv2.imshow("screen box", reimage)
+        hwnd2 = FindWindow_bySearch("screen box")
+        win32gui.SetForegroundWindow(hwnd2)
+    
     #cv2.imshow("screen box", frame)
     #cv2.imshow("edges box", edges)
     k = cv2.waitKey(30)&0xFF #64bits! need a mask
