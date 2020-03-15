@@ -192,7 +192,7 @@ def mathc_img_ini(image,value):
     
     min_v,max_v,min_l,max_l = cv2.minMaxLoc(res)
     
-    if 150<max_l[1] + h < 270 and 100< max_l[0] + w <1280 and round_start==0:
+    if 150<max_l[1] + h < 270 and 100< max_l[0] + w <1280 :
         count[0] = 0
         round_start = 1
         status='reset'
@@ -1069,13 +1069,8 @@ while(bx!=0 and by!=0 and px!=0 and py!=0):
     #frame = getWindow_Img(hwnd)
     cv2.namedWindow("Message",1)
     cv2.imshow("Message", message)
-<<<<<<< Updated upstream
-    cv2.moveWindow('Message',1225,106)
-    cv2.imshow("screen box", reimage)
-=======
     cv2.moveWindow('Message',1005,106)
     #cv2.imshow("screen box", reimage)
->>>>>>> Stashed changes
     hwnd1 = FindWindow_bySearch("Message")
     win32gui.SetForegroundWindow(hwnd1)
     #cv2.imshow("screen box", frame)
