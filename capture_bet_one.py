@@ -10,7 +10,7 @@ from time import sleep
 from PIL import Image
 from PIL import ImageGrab
 import collections
-from pynput.mouse import Listener
+#from pynput.mouse import Listener
 import gc
 from configparser import ConfigParser
 
@@ -664,9 +664,12 @@ def mathc_img_whowin1(image,value):
 def mathc_img_color_one(image,value): 
     global cards,bankers,colors,end
     img_rgb = image
-     
+    cxs=cfg['param'].getint('cxs')
+    cys=cfg['param'].getint('cys')
+    cxe=cfg['param'].getint('cxe')
+    cye=cfg['param'].getint('cye')
     #card = [562,175,634,280]
-    card = [569+5,181+5,579+5,205+5]
+    card = [cxs,cys,cxe,cye]
     
     #hh = (card[3]-card[1])/2
     #ww = (card[2]-card[0])*4/5
@@ -899,8 +902,8 @@ bx,by = mathc_img_bet_banker(frame,1)
 px,py = mathc_img_bet_player(frame,1)
 #cx,cy = mathc_img_bet_confirm(frame,1)
 
-while(bx!=0 and by!=0 and px!=0 and py!=0):
-    
+#while(bx!=0 and by!=0 and px!=0 and py!=0):
+while True:
     sleep(0.03)
     message.fill(255) #= np.zeros((500, 600), np.uint8)
     x, y, width, height = getWindow_W_H(hwnd)
