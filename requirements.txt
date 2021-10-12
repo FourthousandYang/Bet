@@ -1,5 +1,5 @@
 numpy==1.18.1
-opencv-python==3.4.1.15
+opencv-python==4.2.0.32
 Pillow==7.0.0
 PyAutoGUI==0.9.4
 win32core==221.36
